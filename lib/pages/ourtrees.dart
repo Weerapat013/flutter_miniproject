@@ -83,9 +83,12 @@ class _OurTreesState extends State<OurTrees> {
                         'This is Caption', //Todo: Insert Data Here!!
                         style: Theme.of(context).textTheme.bodySmall,
                       ),
-                      trailing: const Icon(
-                        Icons.visibility,
-                        color: greenPrimary,
+                      trailing: GestureDetector(
+                        child: const Icon(
+                          Icons.visibility,
+                          color: greenPrimary,
+                        ),
+                        onTap: () {},
                       ),
                     ),
                   );

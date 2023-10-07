@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_miniproject/color.dart';
+import 'package:flutter_miniproject/pages/addtree.dart';
+import 'package:flutter_miniproject/pages/viewtree.dart';
 
 class MyTrees extends StatefulWidget {
   const MyTrees({super.key});
@@ -63,7 +65,14 @@ class _MyTreesState extends State<MyTrees> {
               height: 70,
               width: 300,
               child: ElevatedButton.icon(
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const AddTree(),
+                    ),
+                  );
+                },
                 style: ElevatedButton.styleFrom(
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(100),
@@ -145,21 +154,34 @@ class _MyTreesState extends State<MyTrees> {
                         'This is Caption', //Todo: Insert Data Here!!
                         style: Theme.of(context).textTheme.bodySmall,
                       ),
-                      trailing: const Column(
+                      trailing: Column(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           //View
-                          Icon(
-                            Icons.visibility,
-                            size: 30,
-                            color: greenPrimary,
+                          GestureDetector(
+                            child: const Icon(
+                              Icons.visibility,
+                              size: 30,
+                              color: greenPrimary,
+                            ),
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => const ViewTree(),
+                                ),
+                              );
+                            },
                           ),
 
                           //Delete
-                          Icon(
-                            Icons.delete,
-                            size: 20,
-                            color: alertPrimary,
+                          GestureDetector(
+                            child: const Icon(
+                              Icons.delete,
+                              size: 20,
+                              color: alertPrimary,
+                            ),
+                            onTap: () {},
                           ),
                         ],
                       ),
