@@ -1,5 +1,9 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_miniproject/color.dart';
+import 'package:flutter_miniproject/pages/viewtree.dart';
+import 'package:http/http.dart' as http;
 
 class OurTrees extends StatefulWidget {
   const OurTrees({super.key});
@@ -9,6 +13,32 @@ class OurTrees extends StatefulWidget {
 }
 
 class _OurTreesState extends State<OurTrees> {
+  List<dynamic> trees = [];
+
+  @override
+  void initState() {
+    getTrees();
+    super.initState();
+  }
+
+  Future getTrees() async {
+    const url = "http://192.168.1.136/addressbook/selectAllTree_proj.php";
+    final uri = Uri.parse(url);
+    final response = await http.get(uri);
+    //print(response.statusCode); //Debug
+    if (response.statusCode == 200) {
+      final json = response.body;
+      final data = jsonDecode(json);
+
+      setState(() {
+        trees = data;
+        //print(trees); //Debug
+      });
+    } else {
+      //print('Error Connection'); //Debug
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
@@ -29,7 +59,7 @@ class _OurTreesState extends State<OurTrees> {
                   .copyWith(color: onbackgroundPrimary_1),
             ),
             Text(
-              '1,000,000',
+              trees.length.toString(), //'1,000,000',
               style: Theme.of(context)
                   .textTheme
                   .headlineLarge!
@@ -54,8 +84,12 @@ class _OurTreesState extends State<OurTrees> {
               height: 300,
               //color: Colors.amber,
               child: ListView.builder(
-                itemCount: 10,
+                itemCount: trees.length,
                 itemBuilder: (context, index) {
+                  final id = trees[index]['id'];
+                  final title = trees[index]['title'];
+                  final caption = trees[index]['caption'];
+
                   return Container(
                     padding: const EdgeInsets.symmetric(vertical: 16),
                     decoration: const BoxDecoration(
@@ -67,20 +101,26 @@ class _OurTreesState extends State<OurTrees> {
                       ),
                     ),
                     child: ListTile(
-                      leading: const CircleAvatar(
+                      leading: CircleAvatar(
                         radius: 30,
                         backgroundColor: onAlertPrimary, //Insert Data Here!!
-                        child: null,
+                        child: Text(
+                          id,
+                          style: Theme.of(context)
+                              .textTheme
+                              .headlineSmall!
+                              .copyWith(color: greenPrimary),
+                        ),
                       ),
                       title: Text(
-                        'This is Title', //Todo: Insert Data Here!!
+                        title,
                         style: Theme.of(context)
                             .textTheme
                             .bodyLarge!
                             .copyWith(color: greenPrimary),
                       ),
                       subtitle: Text(
-                        'This is Caption', //Todo: Insert Data Here!!
+                        caption,
                         style: Theme.of(context).textTheme.bodySmall,
                       ),
                       trailing: GestureDetector(
@@ -88,7 +128,17 @@ class _OurTreesState extends State<OurTrees> {
                           Icons.visibility,
                           color: greenPrimary,
                         ),
-                        onTap: () {},
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => ViewTree(
+                                userTrees: trees,
+                                index: index,
+                              ),
+                            ),
+                          );
+                        },
                       ),
                     ),
                   );

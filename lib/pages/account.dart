@@ -1,6 +1,9 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_miniproject/color.dart';
 import 'package:flutter_miniproject/pages/contact.dart';
+import 'package:http/http.dart' as http;
 
 class Account extends StatefulWidget {
   const Account({super.key});
@@ -10,8 +13,41 @@ class Account extends StatefulWidget {
 }
 
 class _AccountState extends State<Account> {
+  List<dynamic> user = [];
+
+  @override
+  void initState() {
+    getUser();
+    super.initState();
+  }
+
+  Future getUser() async {
+    const url = "http://192.168.1.136/addressbook/selectUser_proj.php";
+    final uri = Uri.parse(url);
+    final response = await http.post(uri);
+    print(response.statusCode); //Debug
+    if (response.statusCode == 200) {
+      final json = response.body;
+      final data = jsonDecode(json);
+
+      setState(() {
+        user = data;
+        print(user); //Debug
+      });
+    } else {
+      print('Error Connection'); //Debug
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    final id = user[0]['id'];
+    final name = user[0]['fullname'];
+    final birthday = user[0]['birthday'];
+    final address = user[0]['address'];
+    final email = user[0]['email'];
+    final tel = user[0]['phone'];
+
     double width = MediaQuery.of(context).size.width;
 
     return Scaffold(
@@ -21,11 +57,18 @@ class _AccountState extends State<Account> {
           child: Column(
             children: [
               //User Image
-              const Padding(
-                padding: EdgeInsets.symmetric(vertical: 30),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 30),
                 child: CircleAvatar(
-                  backgroundColor: onAlertPrimary, //Todo: Insert Data Here!!
+                  backgroundColor: onAlertPrimary,
                   radius: 100,
+                  child: Text(
+                    id,
+                    style: Theme.of(context)
+                        .textTheme
+                        .headlineLarge!
+                        .copyWith(color: greenPrimary),
+                  ),
                 ),
               ),
 
@@ -57,7 +100,7 @@ class _AccountState extends State<Account> {
                         const SizedBox(width: 50),
                         Flexible(
                           child: Text(
-                            'Weerapat Phutthamongkhon', //Todo: Insert Data Here!!
+                            name,
                             style: Theme.of(context)
                                 .textTheme
                                 .bodyMedium!
@@ -79,7 +122,7 @@ class _AccountState extends State<Account> {
                         const SizedBox(width: 50),
                         Flexible(
                           child: Text(
-                            '24-03-2544', //Todo: Insert Data Here!!
+                            birthday,
                             style: Theme.of(context)
                                 .textTheme
                                 .bodyMedium!
@@ -101,7 +144,7 @@ class _AccountState extends State<Account> {
                         const SizedBox(width: 50),
                         Flexible(
                           child: Text(
-                            '91/118 ถ.เลี่ยงเมือง อ.เมือง จ.สุราษฎร์ธานี 84000', //Todo: Insert Data Here!!
+                            address,
                             style: Theme.of(context)
                                 .textTheme
                                 .bodyMedium!
@@ -123,7 +166,7 @@ class _AccountState extends State<Account> {
                         const SizedBox(width: 50),
                         Flexible(
                           child: Text(
-                            '6340011013@email.com', //Todo: Insert Data Here!!
+                            email,
                             style: Theme.of(context)
                                 .textTheme
                                 .bodyMedium!
@@ -145,7 +188,7 @@ class _AccountState extends State<Account> {
                         const SizedBox(width: 50),
                         Flexible(
                           child: Text(
-                            '064-0253302', //Todo: Insert Data Here!!
+                            tel,
                             style: Theme.of(context)
                                 .textTheme
                                 .bodyMedium!

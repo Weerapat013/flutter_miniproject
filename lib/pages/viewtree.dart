@@ -2,7 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_miniproject/color.dart';
 
 class ViewTree extends StatefulWidget {
-  const ViewTree({super.key});
+  final List userTrees;
+  final int index;
+
+  const ViewTree({
+    Key? key,
+    required this.userTrees,
+    required this.index,
+  }) : super(key: key);
 
   @override
   State<ViewTree> createState() => _ViewTreeState();
@@ -12,6 +19,10 @@ class _ViewTreeState extends State<ViewTree> {
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
+    final id = widget.userTrees[widget.index]['id'];
+    final title = widget.userTrees[widget.index]['title'];
+    final caption = widget.userTrees[widget.index]['caption'];
+    final description = widget.userTrees[widget.index]['description'];
 
     return SafeArea(
       child: Scaffold(
@@ -25,17 +36,24 @@ class _ViewTreeState extends State<ViewTree> {
           child: Column(
             children: [
               //Tree Image
-              const Padding(
-                padding: EdgeInsets.only(top: 30, bottom: 10),
+              Padding(
+                padding: const EdgeInsets.only(top: 30, bottom: 10),
                 child: CircleAvatar(
                   backgroundColor: onAlertPrimary, //Todo: Insert Data Here!!
                   radius: 100,
+                  child: Text(
+                    id,
+                    style: Theme.of(context).textTheme.headlineLarge!.copyWith(
+                          color: greenPrimary,
+                          fontSize: 80,
+                        ),
+                  ),
                 ),
               ),
 
               //Title
               Text(
-                'Title Here',
+                title,
                 style: Theme.of(context)
                     .textTheme
                     .headlineMedium!
@@ -43,12 +61,13 @@ class _ViewTreeState extends State<ViewTree> {
               ),
 
               Text(
-                'Caption Here',
+                caption,
                 style: Theme.of(context)
                     .textTheme
                     .headlineSmall!
                     .copyWith(color: onbackgroundPrimary_1),
               ),
+
               //Line
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -71,6 +90,8 @@ class _ViewTreeState extends State<ViewTree> {
                   ),
                 ],
               ),
+
+              //
               Container(
                 width: width * 0.8,
                 height: 200,
@@ -81,8 +102,37 @@ class _ViewTreeState extends State<ViewTree> {
                 child: Padding(
                   padding: const EdgeInsets.all(32),
                   child: Text(
-                    '1\n2\n3\n4\n5',
+                    description,
                     style: Theme.of(context).textTheme.bodySmall,
+                  ),
+                ),
+              ),
+
+              //Button Back
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 24),
+                child: SizedBox(
+                  height: 60,
+                  width: 200,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    style: ElevatedButton.styleFrom(
+                      foregroundColor: greenPrimary,
+                      backgroundColor: onAlertPrimary,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(100),
+                      ),
+                      side: const BorderSide(
+                        color: greenPrimary,
+                        width: 5,
+                      ),
+                    ),
+                    child: Text(
+                      'Back',
+                      style: Theme.of(context).textTheme.headlineSmall,
+                    ),
                   ),
                 ),
               ),

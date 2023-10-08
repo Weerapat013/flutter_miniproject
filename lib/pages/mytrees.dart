@@ -1,7 +1,10 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_miniproject/color.dart';
 import 'package:flutter_miniproject/pages/addtree.dart';
 import 'package:flutter_miniproject/pages/viewtree.dart';
+import 'package:http/http.dart' as http;
 
 class MyTrees extends StatefulWidget {
   const MyTrees({super.key});
@@ -11,6 +14,53 @@ class MyTrees extends StatefulWidget {
 }
 
 class _MyTreesState extends State<MyTrees> {
+  List<dynamic> userTrees = [];
+
+  @override
+  void initState() {
+    getUserTree();
+    super.initState();
+  }
+
+  Future getUserTree() async {
+    const url = "http://192.168.1.136/addressbook/selectUserTree_proj.php";
+    final uri = Uri.parse(url);
+    final response = await http.post(uri);
+    //print(response.statusCode); //Debug
+    if (response.statusCode == 200) {
+      final json = response.body;
+      final data = jsonDecode(json);
+
+      setState(() {
+        userTrees = data;
+        //print(userTrees); //Debug
+      });
+    } else {
+      //print('Error Connection'); //Debug
+    }
+  }
+
+  Future deletePost(postID) async {
+    const url = "http://192.168.1.136/addressbook/deleteUserTree_proj.php";
+    final uri = Uri.parse(url);
+    var post = {};
+
+    post['id'] = postID;
+    final response = await http.post(uri, body: post);
+    //print(response.statusCode);
+    if (response.statusCode == 200) {
+      final json = response.body;
+      final result = jsonDecode(json);
+
+      if (result == "Success") {
+        //print('Delete Post Success');
+        getUserTree();
+      } else {
+        //print('Delete Post Error');
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
@@ -48,7 +98,7 @@ class _MyTreesState extends State<MyTrees> {
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 20),
                       child: Text(
-                        '36', //Todo: Insert Data Here!!
+                        userTrees.length.toString(),
                         style: Theme.of(context)
                             .textTheme
                             .headlineLarge!
@@ -65,13 +115,21 @@ class _MyTreesState extends State<MyTrees> {
               height: 70,
               width: 300,
               child: ElevatedButton.icon(
-                onPressed: () {
-                  Navigator.push(
-                    context,
+                onPressed: () async {
+                  //Receive return value after .Pop
+                  var refresh = await Navigator.push(
+                    context, 
                     MaterialPageRoute(
                       builder: (context) => const AddTree(),
                     ),
                   );
+
+                  //After .Pop then refresh data
+                  if (refresh == 'refresh') {
+                    setState(() {
+                      getUserTree();
+                    });
+                  }
                 },
                 style: ElevatedButton.styleFrom(
                   shape: RoundedRectangleBorder(
@@ -125,8 +183,13 @@ class _MyTreesState extends State<MyTrees> {
               height: 442,
               //color: Colors.amber,
               child: ListView.builder(
-                itemCount: 10,
+                itemCount: userTrees.length,
                 itemBuilder: (context, index) {
+                  final id = userTrees[index]['id'];
+                  final title = userTrees[index]['title'];
+                  final caption = userTrees[index]['caption'];
+                  //final userId = userTrees[index]['userid'];
+
                   return Container(
                     padding: const EdgeInsets.symmetric(vertical: 16),
                     decoration: const BoxDecoration(
@@ -138,20 +201,26 @@ class _MyTreesState extends State<MyTrees> {
                       ),
                     ),
                     child: ListTile(
-                      leading: const CircleAvatar(
+                      leading: CircleAvatar(
                         radius: 30,
                         backgroundColor: onAlertPrimary, //Insert Data Here!!
-                        child: null,
+                        child: Text(
+                          id,
+                          style: Theme.of(context)
+                              .textTheme
+                              .headlineSmall!
+                              .copyWith(color: greenPrimary),
+                        ),
                       ),
                       title: Text(
-                        'This is Title', //Todo: Insert Data Here!!
+                        title,
                         style: Theme.of(context)
                             .textTheme
                             .bodyLarge!
                             .copyWith(color: greenPrimary),
                       ),
                       subtitle: Text(
-                        'This is Caption', //Todo: Insert Data Here!!
+                        caption,
                         style: Theme.of(context).textTheme.bodySmall,
                       ),
                       trailing: Column(
@@ -168,7 +237,10 @@ class _MyTreesState extends State<MyTrees> {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) => const ViewTree(),
+                                  builder: (context) => ViewTree(
+                                    userTrees: userTrees,
+                                    index: index,
+                                  ),
                                 ),
                               );
                             },
@@ -181,7 +253,9 @@ class _MyTreesState extends State<MyTrees> {
                               size: 20,
                               color: alertPrimary,
                             ),
-                            onTap: () {},
+                            onTap: () {
+                              deletePost(id);
+                            },
                           ),
                         ],
                       ),

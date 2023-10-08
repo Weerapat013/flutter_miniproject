@@ -1,5 +1,8 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_miniproject/color.dart';
+import 'package:http/http.dart' as http;
 
 class AddTree extends StatefulWidget {
   const AddTree({super.key});
@@ -13,6 +16,31 @@ class _AddTreeState extends State<AddTree> {
   TextEditingController title = TextEditingController();
   TextEditingController caption = TextEditingController();
   TextEditingController description = TextEditingController();
+
+  Future addPost() async {
+    const url = "http://192.168.1.136/addressbook/insertTree_proj.php";
+    final uri = Uri.parse(url);
+    final response = await http.post(uri, body: {
+      'title': title.text,
+      'caption': caption.text,
+      'description': description.text,
+    });
+
+    //print(response.statusCode); //Debug
+    if (response.statusCode == 200) {
+      final json = response.body;
+      final data = jsonDecode(json);
+
+      if (data == 'Success') {
+        //print(data); //Debug
+        setState(() {
+          Navigator.pop(context, 'refresh');
+        });
+      } else {
+        //print('Insert Error'); //Debug
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -132,12 +160,6 @@ class _AddTreeState extends State<AddTree> {
                       //Add Description
                       TextFormField(
                         controller: description,
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter your Title';
-                          }
-                          return null;
-                        },
                         decoration: InputDecoration(
                           contentPadding: const EdgeInsets.symmetric(
                               vertical: 50.0, horizontal: 30.0),
@@ -204,7 +226,11 @@ class _AddTreeState extends State<AddTree> {
                             height: 60,
                             width: 170,
                             child: ElevatedButton(
-                              onPressed: () {},
+                              onPressed: () {
+                                if (_formKey.currentState!.validate()) {
+                                  addPost();
+                                }
+                              },
                               style: ElevatedButton.styleFrom(
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(100),
