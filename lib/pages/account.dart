@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_miniproject/color.dart';
 import 'package:flutter_miniproject/pages/contact.dart';
+import 'package:flutter_miniproject/pages/updateaccount.dart';
 import 'package:http/http.dart' as http;
 
 class Account extends StatefulWidget {
@@ -217,7 +218,23 @@ class _AccountState extends State<Account> {
                   height: 60,
                   width: 250,
                   child: ElevatedButton.icon(
-                    onPressed: () {},
+                    onPressed: () async {
+                      var refresh = await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => UpdateAccount(
+                            user: user,
+                            index: 0,
+                          ),
+                        ),
+                      );
+
+                      if (refresh == 'refresh') {
+                        setState(() {
+                          getUser();
+                        });
+                      }
+                    },
                     style: ElevatedButton.styleFrom(
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(100),

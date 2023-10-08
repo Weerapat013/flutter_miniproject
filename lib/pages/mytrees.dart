@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_miniproject/color.dart';
 import 'package:flutter_miniproject/pages/addtree.dart';
+import 'package:flutter_miniproject/pages/updatetree.dart';
 import 'package:flutter_miniproject/pages/viewtree.dart';
 import 'package:http/http.dart' as http;
 
@@ -118,7 +119,7 @@ class _MyTreesState extends State<MyTrees> {
                 onPressed: () async {
                   //Receive return value after .Pop
                   var refresh = await Navigator.push(
-                    context, 
+                    context,
                     MaterialPageRoute(
                       builder: (context) => const AddTree(),
                     ),
@@ -201,16 +202,29 @@ class _MyTreesState extends State<MyTrees> {
                       ),
                     ),
                     child: ListTile(
-                      leading: CircleAvatar(
-                        radius: 30,
-                        backgroundColor: onAlertPrimary, //Insert Data Here!!
-                        child: Text(
-                          id,
-                          style: Theme.of(context)
-                              .textTheme
-                              .headlineSmall!
-                              .copyWith(color: greenPrimary),
+                      leading: GestureDetector(
+                        child: CircleAvatar(
+                          radius: 30,
+                          backgroundColor: onAlertPrimary, //Insert Data Here!!
+                          child: Text(
+                            id,
+                            style: Theme.of(context)
+                                .textTheme
+                                .headlineSmall!
+                                .copyWith(color: greenPrimary),
+                          ),
                         ),
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => ViewTree(
+                                userTrees: userTrees,
+                                index: index,
+                              ),
+                            ),
+                          );
+                        },
                       ),
                       title: Text(
                         title,
@@ -229,20 +243,26 @@ class _MyTreesState extends State<MyTrees> {
                           //View
                           GestureDetector(
                             child: const Icon(
-                              Icons.visibility,
+                              Icons.drive_file_rename_outline_sharp,
                               size: 30,
                               color: greenPrimary,
                             ),
-                            onTap: () {
-                              Navigator.push(
+                            onTap: () async {
+                              var refresh = await Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) => ViewTree(
+                                  builder: (context) => UpdateTree(
                                     userTrees: userTrees,
                                     index: index,
                                   ),
                                 ),
                               );
+
+                              if (refresh == 'refresh') {
+                                setState(() {
+                                  getUserTree();
+                                });
+                              }
                             },
                           ),
 

@@ -101,16 +101,29 @@ class _OurTreesState extends State<OurTrees> {
                       ),
                     ),
                     child: ListTile(
-                      leading: CircleAvatar(
-                        radius: 30,
-                        backgroundColor: onAlertPrimary, //Insert Data Here!!
-                        child: Text(
-                          id,
-                          style: Theme.of(context)
-                              .textTheme
-                              .headlineSmall!
-                              .copyWith(color: greenPrimary),
+                      leading: GestureDetector(
+                        child: CircleAvatar(
+                          radius: 30,
+                          backgroundColor: onAlertPrimary, //Insert Data Here!!
+                          child: Text(
+                            id,
+                            style: Theme.of(context)
+                                .textTheme
+                                .headlineSmall!
+                                .copyWith(color: greenPrimary),
+                          ),
                         ),
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => ViewTree(
+                                userTrees: trees,
+                                index: index,
+                              ),
+                            ),
+                          );
+                        },
                       ),
                       title: Text(
                         title,
