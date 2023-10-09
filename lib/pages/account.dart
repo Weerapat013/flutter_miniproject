@@ -23,21 +23,21 @@ class _AccountState extends State<Account> {
   }
 
   Future getUser() async {
-    // TODO: Need to change IP everytime to connect DB (ipconfig in CMD)
+    //Need to change IP every time to connect DB (ipconfig in CMD)
     const url = "http://172.21.245.138/addressbook/selectUser_proj.php";
     final uri = Uri.parse(url);
     final response = await http.post(uri);
-    print(response.statusCode); //Debug
+    //print(response.statusCode); //Debug
     if (response.statusCode == 200) {
       final json = response.body;
       final data = jsonDecode(json);
 
       setState(() {
         user = data;
-        print(user); //Debug
+        //print(user); //Debug
       });
     } else {
-      print('Error Connection'); //Debug
+      //print('Error Connection'); //Debug
     }
   }
 
