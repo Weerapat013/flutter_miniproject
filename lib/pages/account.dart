@@ -23,7 +23,8 @@ class _AccountState extends State<Account> {
   }
 
   Future getUser() async {
-    const url = "http://192.168.1.136/addressbook/selectUser_proj.php";
+    // TODO: Need to change IP everytime to connect DB (ipconfig in CMD)
+    const url = "http://172.21.245.138/addressbook/selectUser_proj.php";
     final uri = Uri.parse(url);
     final response = await http.post(uri);
     print(response.statusCode); //Debug

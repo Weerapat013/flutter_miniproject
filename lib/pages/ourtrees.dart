@@ -22,7 +22,8 @@ class _OurTreesState extends State<OurTrees> {
   }
 
   Future getTrees() async {
-    const url = "http://192.168.1.136/addressbook/selectAllTree_proj.php";
+    // TODO: Need to change IP everytime to connect DB (ipconfig in CMD)
+    const url = "http://172.21.245.138/addressbook/selectAllTree_proj.php";
     final uri = Uri.parse(url);
     final response = await http.get(uri);
     //print(response.statusCode); //Debug

@@ -26,7 +26,8 @@ class _UpdateTreeState extends State<UpdateTree> {
   TextEditingController description = TextEditingController();
 
   Future editPost() async {
-    const url = "http://192.168.1.136/addressbook/updateUserTree_proj.php";
+    // TODO: Need to change IP everytime to connect DB (ipconfig in CMD)
+    const url = "http://172.21.245.138/addressbook/updateUserTree_proj.php";
     final uri = Uri.parse(url);
     final response = await http.post(uri, body: {
       'id': id.text,
